@@ -30,8 +30,8 @@ cd $GITCLONE/ssl
 openssl genrsa -des3 -passout pass:x -out server.pass.key 2048
 openssl rsa -passin pass:x -in server.pass.key -out ssl.key
 rm server.pass.key
-openssl req -new -key ssl.key -out ssl.csr
-openssl x509 -req -days 365 -in ssl.csr -signkey ssl.key -out ssl.crt
+openssl req -new -key ssl.key -out ssl.csr -subj='/C=MX/ST=Mexico/O=Personal'
+openssl x509 -req -days 365 -in ssl.csr -signkey ssl.key -out ssl.crt 
 
 #cd into repo folder
 cd $GITCLONE
@@ -41,9 +41,15 @@ sudo cp $INSTALLDIR/userlist $GITCLONE
 sudo cp $INSTALLDIR/env $GITCLONE
 sudo cp $INSTALLDIR/jupyterhub_config.py $GITCLONE
 
+
 # run install
 cd $GITCLONE
 sudo sh install.sh 
+
+# Por ahora compilamos la imagen de jupyter/systemuser Vs los archivos que se descargaron en $GITClONE/src/dockerspawner	
+# Esto es para obtener los últimos archivos utilizados en el Dockerfile y porque se detecto que en el Hub no se compila continuamente
+cd $GITCLONE/src/dockerspawner
+sudo docker build -t jupyter/systemuser systemuser
 
 # configure server
 sudo ./configure.sh
